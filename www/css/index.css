@@ -3,6 +3,7 @@ body {
   padding: 0;
   background-color: #2E46FF;
   color: #FFFFFF;
+  font-family: 'Open Sans', sans-serif;
 }
 
 ul {
@@ -91,7 +92,7 @@ li a:hover:not(.active) {
   display: block;
   color: #06559E;
   margin: 0;
-  padding: 12px 4px;
+  padding: 12px 2px;
 }
 
 #container div button.delete {

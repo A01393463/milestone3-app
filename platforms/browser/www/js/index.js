@@ -17,6 +17,7 @@
  * under the License.
  */
 
+// LOCAL STORAGE *****************************************
 // allows data to be saved and retrieved on the device
 var util = {
     store: function(namespace, data) {
@@ -35,7 +36,41 @@ var util = {
     }
 };
 
-// main functions
+// GEOLOCATION ************************************
+var latitude;
+var longitude;
+
+// onSuccess Callback
+// This method accepts a Position object, which contains the
+// current GPS coordinates
+//
+var onSuccess = function(position) {
+  alert('Latitude: '          + position.coords.latitude         + '\n' +
+        'Longitude: '         + position.coords.longitude        + '\n' +
+        'Altitude: '          + position.coords.altitude         + '\n' +
+        'Accuracy: '          + position.coords.accuracy         + '\n' +
+        'Altitude Accuracy: ' + position.coords.altitudeAccuracy + '\n' +
+        'Heading: '           + position.coords.heading          + '\n' +
+        'Speed: '             + position.coords.speed            + '\n' +
+        'Timestamp: '         + position.timestamp               + '\n');
+
+  latitude = position.coords.latitude;
+  longitude = position.coords.longitude;
+};
+
+// onError Callback receives a PositionError object
+//
+function onError(error) {
+  alert('code: '     + error.code     + '\n' +
+        'message: '  + error.message  + '\n');
+}
+
+// geolocation options
+var options = { enableHighAccuracy: true };
+
+
+
+// MAIN FUNCTIONS *******************************************
 var app = {
     // Application Constructor
     initialize: function() {
@@ -53,12 +88,18 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
+	// get location
+	//if(navigator.geolocation)
+	//  navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+        
         // get the posts stored on the device
         app.posts = util.store('posts');
         app.loadTemplates();
+        
         // get container element and render app.posts with the til template
         app.render("container", "til", { posts: app.posts });
         app.registerCallbacks();
+
     },
     loadTemplates: function() {
         // get template script ids from index.html
@@ -95,8 +136,10 @@ var app = {
           // get container element and render {} with addEntryForm template
           app.render('container', 'addEntryForm', {});
 
+          // change the active nav item
 	  $("#navTil").removeClass('active');
 	  $("#navAdd").addClass('active');
+          
           return;
         }
         if(/\/til\/(\d*)/.test(path) ) // sees if path contains /til/#
@@ -106,12 +149,16 @@ var app = {
           // get container element and render app.posts[id] with entry template
           app.render("container", "entry", { post: app.posts[id] });
           
+	  // change the active nav item
 	  $("#navAdd").removeClass('active');
 	  $("#navTil").addClass('active');
+
           return;
         }
         // get container element and render app.posts with til template
         app.render("container", "til", { posts: app.posts });
+
+	// change the active nav item
 	$("#navAdd").removeClass('active');
 	$("#navTil").addClass('active');
     },
@@ -133,6 +180,10 @@ var app = {
 
         // get container element and render app.posts with til template
         app.render("container", "til", { posts: app.posts });
+        
+        // change the active nav item
+	$("#navAdd").removeClass('active');
+	$("#navTil").addClass('active');
     },
     deleteEntry: function() {
         // gets value of data-id from the clicked link element
